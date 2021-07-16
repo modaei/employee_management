@@ -2,8 +2,8 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from django_filters.rest_framework import (DjangoFilterBackend, FilterSet, DateTimeFromToRangeFilter,
                                            CharFilter)
 from rest_framework.filters import OrderingFilter
-from ..models import Employee
-from .serializers import EmployeeSerializer
+from ..models import Employee, Team
+from .serializers import EmployeeSerializer, TeamSerializer
 from employee_management.paginations import PagePagination
 
 
@@ -20,6 +20,20 @@ class EmployeeFilter(FilterSet):
         fields = ['q', 'name', 'employee_id', 'create_date']
 
 
+class TeamFilter(FilterSet):
+    """
+    Filter set class for searching in teams.
+    It can filter based on team name, create_date or update_date.
+    """
+    q = CharFilter(field_name='name', lookup_expr='icontains')
+    create_date = DateTimeFromToRangeFilter()
+    update_date = DateTimeFromToRangeFilter()
+
+    class Meta:
+        model = Employee
+        fields = ['name', 'create_date', 'update_date']
+
+
 class EmployeeListCreateAPIView(ListCreateAPIView):
     """
        View class for listing, searching and creating employees.
@@ -33,6 +47,24 @@ class EmployeeListCreateAPIView(ListCreateAPIView):
     queryset = Employee.objects.all()
 
 
-class PropertyRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+class EmployeeRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = EmployeeSerializer
     queryset = Employee.objects.all()
+
+
+class TeamListCreateAPIView(ListCreateAPIView):
+    """
+       View class for listing, searching and creating teams.
+    """
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = EmployeeFilter
+    ordering_fields = ['create_date', 'update_date', 'name']
+    ordering = ['-create_date']
+    serializer_class = TeamSerializer
+    pagination_class = PagePagination
+    queryset = Team.objects.all()
+
+
+class TeamRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = TeamSerializer
+    queryset = Team.objects.all()

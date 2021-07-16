@@ -1,8 +1,8 @@
 from rest_framework.test import APITestCase
 from django.urls import reverse
 from rest_framework import status
-from .models import Employee
-from .api.serializers import EmployeeSerializer
+from employment.api.serializers import EmployeeSerializer
+from employment.models import Employee
 
 
 class EmployeeCreateUpdateSetup(APITestCase):
@@ -76,7 +76,7 @@ class EmployeeListGetDeleteSetup(APITestCase):
 class EmployeeCreateTests(EmployeeCreateUpdateSetup):
     def setUp(self):
         super().setUp()
-        self.url = reverse("employment-api:list_create")
+        self.url = reverse("employment-api:employee_list_create")
 
     def test_create_valid_employee(self):
         response = self.client.post(self.url, self.valid_payload, format='json')
@@ -117,7 +117,7 @@ class EmployeeUpdateTests(EmployeeCreateUpdateSetup):
     def setUp(self):
         super().setUp()
         self.employee = Employee.objects.create(name='Jane Doe', employee_id='123456', hourly_rate=17.3)
-        self.url = reverse("employment-api:retrieve_update_destroy", kwargs={'pk': self.employee.pk})
+        self.url = reverse("employment-api:employee_retrieve_update_destroy", kwargs={'pk': self.employee.pk})
 
     def test_update_valid_employee(self):
         response = self.client.put(self.url, self.valid_payload, format='json')
@@ -157,7 +157,7 @@ class EmployeeUpdateTests(EmployeeCreateUpdateSetup):
 class EmployeeListTests(EmployeeListGetDeleteSetup):
     def setUp(self):
         super().setUp()
-        self.url = reverse("employment-api:list_create")
+        self.url = reverse("employment-api:employee_list_create")
 
     def test_get_all_employees(self):
         response = self.client.get(self.url)
@@ -170,7 +170,7 @@ class EmployeeListTests(EmployeeListGetDeleteSetup):
 class EmployeeGetTests(EmployeeListGetDeleteSetup):
     def setUp(self):
         super().setUp()
-        self.url = reverse("employment-api:retrieve_update_destroy", kwargs={'pk': self.employee_jane.pk})
+        self.url = reverse("employment-api:employee_retrieve_update_destroy", kwargs={'pk': self.employee_jane.pk})
 
     def test_get_valid_single_employee(self):
         response = self.client.get(self.url)
@@ -180,7 +180,7 @@ class EmployeeGetTests(EmployeeListGetDeleteSetup):
 
     def test_get_invalid_single_employee(self):
         response = self.client.get(
-            reverse("employment-api:retrieve_update_destroy", kwargs={'pk': 1000000})
+            reverse("employment-api:employee_retrieve_update_destroy", kwargs={'pk': 1000000})
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -188,7 +188,7 @@ class EmployeeGetTests(EmployeeListGetDeleteSetup):
 class EmployeeDeleteTests(EmployeeListGetDeleteSetup):
     def setUp(self):
         super().setUp()
-        self.url = reverse("employment-api:retrieve_update_destroy", kwargs={'pk': self.employee_jane.pk})
+        self.url = reverse("employment-api:employee_retrieve_update_destroy", kwargs={'pk': self.employee_jane.pk})
 
     def test_delete_valid_employee(self):
         response = self.client.delete(self.url)
@@ -198,6 +198,6 @@ class EmployeeDeleteTests(EmployeeListGetDeleteSetup):
 
     def test_delete_invalid_employee(self):
         response = self.client.delete(
-            reverse("employment-api:retrieve_update_destroy", kwargs={'pk': 1000000})
+            reverse("employment-api:employee_retrieve_update_destroy", kwargs={'pk': 1000000})
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
