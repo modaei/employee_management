@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import EmployeeListCreateAPIView, EmployeeRetrieveUpdateDestroyAPIView, TeamListCreateAPIView, \
-    TeamRetrieveUpdateDestroyAPIView
+    TeamRetrieveUpdateDestroyAPIView, TeamEmployeeListCreateAPIView, TeamEmployeeRetrieveUpdateDestroyAPIView
 
 app_name = 'employment-api'
 
@@ -13,4 +13,7 @@ urlpatterns = [
     path('teams/<int:pk>/', TeamRetrieveUpdateDestroyAPIView.as_view(),
          name="team_retrieve_update_destroy"),
 
+    path('team-employees/', TeamEmployeeListCreateAPIView.as_view(), name="team_employee_list_create"),
+    path('team-employees/<int:pk>/', TeamEmployeeRetrieveUpdateDestroyAPIView.as_view(),
+         name="team_employee_retrieve_update_destroy"),
 ]

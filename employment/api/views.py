@@ -2,8 +2,8 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from django_filters.rest_framework import (DjangoFilterBackend, FilterSet, DateTimeFromToRangeFilter,
                                            CharFilter)
 from rest_framework.filters import OrderingFilter
-from ..models import Employee, Team
-from .serializers import EmployeeSerializer, TeamSerializer
+from ..models import Employee, Team, TeamEmployee
+from .serializers import EmployeeSerializer, TeamSerializer, TeamEmployeeSerializer
 from employee_management.paginations import PagePagination
 
 
@@ -68,3 +68,18 @@ class TeamListCreateAPIView(ListCreateAPIView):
 class TeamRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
+
+
+class TeamEmployeeListCreateAPIView(ListCreateAPIView):
+    """
+       View class for listing, searching and creating TeamEmployee objects.
+    """
+    filter_backends = [DjangoFilterBackend]
+    serializer_class = TeamEmployeeSerializer
+    pagination_class = PagePagination
+    queryset = TeamEmployee.objects.all()
+
+
+class TeamEmployeeRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = TeamEmployeeSerializer
+    queryset = TeamEmployee.objects.all()
