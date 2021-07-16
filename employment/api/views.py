@@ -30,7 +30,7 @@ class TeamFilter(FilterSet):
     update_date = DateTimeFromToRangeFilter()
 
     class Meta:
-        model = Employee
+        model = Team
         fields = ['name', 'create_date', 'update_date']
 
 
@@ -57,7 +57,7 @@ class TeamListCreateAPIView(ListCreateAPIView):
        View class for listing, searching and creating teams.
     """
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_class = EmployeeFilter
+    filterset_class = TeamFilter
     ordering_fields = ['create_date', 'update_date', 'name']
     ordering = ['-create_date']
     serializer_class = TeamSerializer

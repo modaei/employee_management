@@ -17,7 +17,9 @@ class Team(models.Model):
     Represents a team of employees
     """
     name = models.CharField(blank=False, null=False, max_length=settings.NAME_MAX_LEN, db_index=True)
-    leader = models.ForeignKey(Employee, blank=False, null=True, on_delete=models.SET_NULL)
+    leader = models.ForeignKey(Employee, blank=False, null=False, on_delete=models.PROTECT)
+    create_date = models.DateTimeField(auto_now=False, auto_now_add=True, verbose_name="Created")
+    update_date = models.DateTimeField(auto_now=True, auto_now_add=False, verbose_name="Last updated")
 
 
 class TeamEmployee(models.Model):
@@ -27,4 +29,3 @@ class TeamEmployee(models.Model):
     employee = models.ForeignKey(Employee, blank=False, null=False, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, blank=False, null=False, on_delete=models.CASCADE)
     create_date = models.DateTimeField(auto_now=False, auto_now_add=True, verbose_name="Created")
-    update_date = models.DateTimeField(auto_now=True, auto_now_add=False, verbose_name="Last updated")
