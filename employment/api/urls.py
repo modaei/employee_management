@@ -4,8 +4,8 @@ from .views import EmployeeListCreateAPIView, PropertyRetrieveUpdateDestroyAPIVi
 app_name = 'employment-api'
 
 urlpatterns = [
-    path('employees/', EmployeeListCreateAPIView.as_view(), name="employees_list_create"),
+    path('employees/', EmployeeListCreateAPIView.as_view(), name="list_create"),
     path('employees/<int:pk>/', PropertyRetrieveUpdateDestroyAPIView.as_view(),
-         name="employees_retrieve_update_destroy"),
+         name="retrieve_update_destroy"),
 
 ]
