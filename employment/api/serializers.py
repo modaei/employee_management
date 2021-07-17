@@ -4,6 +4,21 @@ import re
 from rest_framework.validators import UniqueTogetherValidator
 
 
+class EmployeeBriefSerializer(ModelSerializer):
+    """
+    Serializes employee objects with minimal info to include in team members info.
+    """
+    create_date = SerializerMethodField()
+
+    class Meta:
+        model = Employee
+        fields = ['id', 'create_date', 'name', 'employee_id']
+        read_only_fields = ['id', 'name', 'create_date', 'employee_id']
+
+    def get_create_date(self, obj):
+        return int(obj.create_date.timestamp())
+
+
 class TeamBriefSerializer(ModelSerializer):
     """
     Serializes team objects with minimal info to include in employees team info.
@@ -60,7 +75,7 @@ class TeamSerializer(ModelSerializer):
     """
     create_date = SerializerMethodField()
     update_date = SerializerMethodField()
-    members = EmployeeSerializer(many=True, read_only=True)
+    members = EmployeeBriefSerializer(many=True, read_only=True)
 
     class Meta:
         model = Team
@@ -77,7 +92,7 @@ class TeamSerializer(ModelSerializer):
         """
         Allows to send the leader's id as 'leader' in PUT and POST (Instead of 'leader_id').
         """
-        self.fields['leader'] = EmployeeSerializer()
+        self.fields['leader'] = EmployeeBriefSerializer()
         return super(TeamSerializer, self).to_representation(instance)
 
     def validate_name(self, value):

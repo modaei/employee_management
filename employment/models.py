@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Employee(models.Model):
@@ -32,3 +34,14 @@ class TeamEmployee(models.Model):
     employee = models.ForeignKey(Employee, blank=False, null=False, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, blank=False, null=False, on_delete=models.CASCADE)
     create_date = models.DateTimeField(auto_now=False, auto_now_add=True, verbose_name="Created")
+
+
+@receiver(post_save, sender=Team)
+def add_leader_to_team(sender, instance, **kwargs):
+    """
+    The team leader should always be a member of the team.
+    So if he is not he will be automatically be added to the team.
+    """
+    team_employee = TeamEmployee.objects.filter(team=instance).filter(employee=instance.leader).first()
+    if team_employee is None:
+        TeamEmployee.objects.create(team=instance, employee=instance.leader)

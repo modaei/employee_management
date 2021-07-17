@@ -47,11 +47,6 @@ class TeamCreateUpdateSetup(APITestCase):
 
         }
 
-    def tearDown(self):
-        Team.objects.all().delete()
-        Employee.objects.all().delete()
-        super().tearDown()
-
 
 class TeamListGetDeleteSetup(APITestCase):
     def setUp(self):
@@ -61,11 +56,6 @@ class TeamListGetDeleteSetup(APITestCase):
 
         self.team_backend = Team.objects.create(name='Back end', leader=self.employee_john)
         self.team_frontend = Team.objects.create(name='Front end', leader=self.employee_jane)
-
-    def tearDown(self):
-        Team.objects.all().delete()
-        Employee.objects.all().delete()
-        super().tearDown()
 
 
 class TeamCreateTests(TeamCreateUpdateSetup):
@@ -140,7 +130,7 @@ class TeamListTests(TeamListGetDeleteSetup):
 
     def test_get_all_teams(self):
         response = self.client.get(self.url)
-        teams = Team.objects.all()
+        teams = Team.objects.all().order_by('-create_date')
         serializer = TeamSerializer(teams, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["results"], serializer.data)
