@@ -2,6 +2,7 @@ from rest_framework.serializers import (ModelSerializer, SerializerMethodField, 
 from ..models import Team, Employee, TeamEmployee, WorkArrangement
 import re
 from rest_framework.validators import UniqueTogetherValidator
+from django.db.models import Sum
 
 
 class EmployeeBriefSerializer(ModelSerializer):
@@ -153,14 +154,25 @@ class WorkArrangementSerializer(ModelSerializer):
 
     def validate(self, attrs):
         """
+        If WorkArrangement is full time, user must have no other work arrangements.
         If WorkArrangement is part time, percentage is mandatory.
+        If WorkArrangement is part time, user must not have a full time job.
+        If WorkArrangement is part time, sum of all user work arrangement percentages must be less than or equal 100.
         """
-        if attrs['type'] == WorkArrangement.WorkTypes.PartTime and (
-                'percentage' not in attrs or attrs['percentage'] is None):
-            raise ValidationError("Percentage should be specified for part time jobs.")
-
-
-
+        if attrs['type'] == WorkArrangement.WorkTypes.FullTime:
+            if WorkArrangement.objects.filter(employee_id=attrs['employee']).exists():
+                raise ValidationError("Employee already has another work assignment.")
+        elif attrs['type'] == WorkArrangement.WorkTypes.PartTime:
+            if 'percentage' not in attrs or attrs['percentage'] is None:
+                raise ValidationError("Percentage should be specified for work assignments.")
+            work_arrangements = WorkArrangement.objects.filter(employee_id=attrs['employee']).all()
+            if any(work_arrangement.type == WorkArrangement.WorkTypes.FullTime for work_arrangement in
+                   work_arrangements):
+                raise ValidationError("User already has a full time work assignment.")
+            sum_percentage = WorkArrangement.objects.filter(employee_id=attrs['employee']).aggregate(Sum('percentage'))[
+                'percentage__sum']
+            if sum_percentage is not None and sum_percentage + int(attrs['percentage']) > 100:
+                raise ValidationError("Sum of user work assignment percentages can not exceed 100.")
         return attrs
 
     def to_representation(self, instance):
