@@ -5,6 +5,8 @@ from rest_framework.filters import OrderingFilter
 from ..models import Employee, Team, TeamEmployee
 from .serializers import EmployeeSerializer, TeamSerializer, TeamEmployeeSerializer
 from employee_management.paginations import PagePagination
+from rest_framework.response import Response
+from rest_framework import status
 
 
 class EmployeeFilter(FilterSet):
@@ -83,3 +85,13 @@ class TeamEmployeeListCreateAPIView(ListCreateAPIView):
 class TeamEmployeeRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = TeamEmployeeSerializer
     queryset = TeamEmployee.objects.all()
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        The leader of a team can not be removed from team members unless the team is deleted.
+        """
+        instance = self.get_object()
+        if instance.team.leader == instance.employee and Team.objects.filter(id=instance.team.id).exists():
+            return Response('A team leader can not be removed from the team.', status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return super().perform_destroy()

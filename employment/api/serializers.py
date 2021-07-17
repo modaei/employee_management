@@ -116,7 +116,7 @@ class TeamEmployeeSerializer(ModelSerializer):
             UniqueTogetherValidator(
                 queryset=TeamEmployee.objects.all(),
                 fields=('employee', 'team'),
-                message='This employee is already added to this group.'
+                message='This employee is already added to this team.'
             )
         ]
 
