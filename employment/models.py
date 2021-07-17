@@ -1,7 +1,8 @@
 from django.db import models
 from django.conf import settings
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.core.validators import MaxValueValidator
 
 
 class Employee(models.Model):
@@ -36,6 +37,22 @@ class TeamEmployee(models.Model):
     create_date = models.DateTimeField(auto_now=False, auto_now_add=True, verbose_name="Created")
 
 
+class WorkArrangement(models.Model):
+    """
+    Represents a work arrangement for an employee
+    """
+
+    class WorkTypes(models.IntegerChoices):
+        FullTime = 1
+        PartTime = 2
+
+    employee = models.ForeignKey(Employee, blank=False, null=False, on_delete=models.CASCADE)
+    type = models.IntegerField(choices=WorkTypes.choices, null=False, blank=False)
+    percentage = models.PositiveIntegerField(null=True, blank=True, validators=[MaxValueValidator(100), ])
+    create_date = models.DateTimeField(auto_now=False, auto_now_add=True, verbose_name="Created")
+    update_date = models.DateTimeField(auto_now=True, auto_now_add=False, verbose_name="Last updated")
+
+
 @receiver(post_save, sender=Team)
 def add_leader_to_team(sender, instance, **kwargs):
     """
@@ -45,3 +62,12 @@ def add_leader_to_team(sender, instance, **kwargs):
     team_employee = TeamEmployee.objects.filter(team=instance).filter(employee=instance.leader).first()
     if team_employee is None:
         TeamEmployee.objects.create(team=instance, employee=instance.leader)
+
+
+@receiver(pre_save, sender=WorkArrangement)
+def set_percentage_none_for_full_time_arrangements(sender, instance, **kwargs):
+    """
+    If a job is full time the value for percentage will be ignored and always be set to None
+    """
+    if instance.type == WorkArrangement.WorkTypes.FullTime:
+        instance.percentage = None

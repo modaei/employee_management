@@ -2,8 +2,8 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from django_filters.rest_framework import (DjangoFilterBackend, FilterSet, DateTimeFromToRangeFilter,
                                            CharFilter, NumberFilter)
 from rest_framework.filters import OrderingFilter
-from ..models import Employee, Team, TeamEmployee
-from .serializers import EmployeeSerializer, TeamSerializer, TeamEmployeeSerializer
+from ..models import Employee, Team, TeamEmployee, WorkArrangement
+from .serializers import EmployeeSerializer, TeamSerializer, TeamEmployeeSerializer, WorkArrangementSerializer
 from employee_management.paginations import PagePagination
 from rest_framework.response import Response
 from rest_framework import status
@@ -46,6 +46,18 @@ class TeamEmployeeFilter(FilterSet):
     class Meta:
         model = TeamEmployee
         fields = ['team', 'employee']
+
+
+class WorkArrangementFilter(FilterSet):
+    """
+    Filter set class for searching in WorkArrangements.
+    It can filter based on employee_id and type.
+    """
+    employee = NumberFilter(field_name='employee_id')
+
+    class Meta:
+        model = WorkArrangement
+        fields = ['employee', 'type']
 
 
 class EmployeeListCreateAPIView(ListCreateAPIView):
@@ -107,3 +119,21 @@ class TeamEmployeeRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
             return Response('A team leader can not be removed from the team.', status=status.HTTP_400_BAD_REQUEST)
         else:
             return super().destroy(self, request, *args, **kwargs)
+
+
+class WorkArrangementListCreateAPIView(ListCreateAPIView):
+    """
+     View class for listing, searching and creating WorkArrangements.
+    """
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = WorkArrangementFilter
+    ordering_fields = ['create_date', 'update_date', ]
+    ordering = ['-create_date']
+    serializer_class = WorkArrangementSerializer
+    pagination_class = PagePagination
+    queryset = WorkArrangement.objects.all()
+
+
+class WorkArrangementRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = WorkArrangementSerializer
+    queryset = WorkArrangement.objects.all()

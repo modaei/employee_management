@@ -1,5 +1,5 @@
 from rest_framework.serializers import (ModelSerializer, SerializerMethodField, ValidationError)
-from ..models import Team, Employee, TeamEmployee
+from ..models import Team, Employee, TeamEmployee, WorkArrangement
 import re
 from rest_framework.validators import UniqueTogetherValidator
 
@@ -131,3 +131,41 @@ class TeamEmployeeSerializer(ModelSerializer):
         self.fields['employee'] = EmployeeBriefSerializer()
         self.fields['team'] = TeamBriefSerializer()
         return super(TeamEmployeeSerializer, self).to_representation(instance)
+
+
+class WorkArrangementSerializer(ModelSerializer):
+    """
+    Serializes WorkArrangement objects.
+    """
+    create_date = SerializerMethodField()
+    update_date = SerializerMethodField()
+
+    class Meta:
+        model = WorkArrangement
+        fields = '__all__'
+        read_only_fields = ['id', 'create_date', 'update_date']
+
+    def get_create_date(self, obj):
+        return int(obj.create_date.timestamp())
+
+    def get_update_date(self, obj):
+        return int(obj.update_date.timestamp())
+
+    def validate(self, attrs):
+        """
+        If WorkArrangement is part time, percentage is mandatory.
+        """
+        if attrs['type'] == WorkArrangement.WorkTypes.PartTime and (
+                'percentage' not in attrs or attrs['percentage'] is None):
+            raise ValidationError("Percentage should be specified for part time jobs.")
+
+
+
+        return attrs
+
+    def to_representation(self, instance):
+        """
+        Allows to send the employee's id as 'employee' in PUT and POST (Instead of 'employee_id').
+        """
+        self.fields['employee'] = EmployeeBriefSerializer()
+        return super(WorkArrangementSerializer, self).to_representation(instance)
