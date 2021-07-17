@@ -14,7 +14,7 @@ class EmployeeSerializer(ModelSerializer):
     class Meta:
         model = Employee
         fields = '__all__'
-        read_only_fields = ['id', 'create_date', 'update_date']
+        read_only_fields = ['id', 'teams', 'create_date', 'update_date']
 
     def get_create_date(self, obj):
         return int(obj.create_date.timestamp())

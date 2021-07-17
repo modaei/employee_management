@@ -10,14 +10,14 @@ from employee_management.paginations import PagePagination
 class EmployeeFilter(FilterSet):
     """
     Filter set class for searching in employees.
-    It can filter based on employee name(q) or create_date.
+    It can filter based on employee name or create_date.
     """
-    q = CharFilter(field_name='name', lookup_expr='icontains')
+    name = CharFilter(field_name='name', lookup_expr='icontains')
     create_date = DateTimeFromToRangeFilter()
 
     class Meta:
         model = Employee
-        fields = ['q', 'name', 'employee_id', 'create_date']
+        fields = ['name', 'employee_id', 'create_date']
 
 
 class TeamFilter(FilterSet):
