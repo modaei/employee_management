@@ -64,6 +64,10 @@ class EmployeeCreateUpdateSetup(APITestCase):
             'hourly_rate': 12.255
         }
 
+    def tearDown(self):
+        Employee.objects.all().delete()
+        super().tearDown()
+
 
 class EmployeeListGetDeleteSetup(APITestCase):
     def setUp(self):

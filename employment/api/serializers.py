@@ -4,12 +4,31 @@ import re
 from rest_framework.validators import UniqueTogetherValidator
 
 
+class TeamBriefSerializer(ModelSerializer):
+    """
+    Serializes team objects with minimal info to include in employees team info.
+    """
+    create_date = SerializerMethodField()
+
+    class Meta:
+        model = Team
+        fields = ['id', 'name', 'create_date']
+        read_only_fields = ['id', 'name', 'create_date']
+
+    def get_create_date(self, obj):
+        return int(obj.create_date.timestamp())
+
+    def get_update_date(self, obj):
+        return int(obj.update_date.timestamp())
+
+
 class EmployeeSerializer(ModelSerializer):
     """
     Serializes employee objects
     """
     create_date = SerializerMethodField()
     update_date = SerializerMethodField()
+    teams = TeamBriefSerializer(many=True, read_only=True)
 
     class Meta:
         model = Employee
