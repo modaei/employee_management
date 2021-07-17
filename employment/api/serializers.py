@@ -41,6 +41,7 @@ class TeamSerializer(ModelSerializer):
     """
     create_date = SerializerMethodField()
     update_date = SerializerMethodField()
+    members = EmployeeSerializer(many=True, read_only=True)
 
     class Meta:
         model = Team

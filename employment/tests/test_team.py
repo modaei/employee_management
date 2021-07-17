@@ -47,6 +47,11 @@ class TeamCreateUpdateSetup(APITestCase):
 
         }
 
+    def tearDown(self):
+        Team.objects.all().delete()
+        Employee.objects.all().delete()
+        super().tearDown()
+
 
 class TeamListGetDeleteSetup(APITestCase):
     def setUp(self):
@@ -56,6 +61,11 @@ class TeamListGetDeleteSetup(APITestCase):
 
         self.team_backend = Team.objects.create(name='Back end', leader=self.employee_john)
         self.team_frontend = Team.objects.create(name='Front end', leader=self.employee_jane)
+
+    def tearDown(self):
+        Team.objects.all().delete()
+        Employee.objects.all().delete()
+        super().tearDown()
 
 
 class TeamCreateTests(TeamCreateUpdateSetup):
