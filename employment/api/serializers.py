@@ -128,6 +128,6 @@ class TeamEmployeeSerializer(ModelSerializer):
         Allows to send the team and employee's id as 'team' and 'employee' in PUT and POST
         (Instead of 'team_id' and 'employee_id').
         """
-        self.fields['employee'] = EmployeeSerializer()
-        self.fields['team'] = TeamSerializer()
+        self.fields['employee'] = EmployeeBriefSerializer()
+        self.fields['team'] = TeamBriefSerializer()
         return super(TeamEmployeeSerializer, self).to_representation(instance)

@@ -1,6 +1,6 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from django_filters.rest_framework import (DjangoFilterBackend, FilterSet, DateTimeFromToRangeFilter,
-                                           CharFilter)
+                                           CharFilter, NumberFilter)
 from rest_framework.filters import OrderingFilter
 from ..models import Employee, Team, TeamEmployee
 from .serializers import EmployeeSerializer, TeamSerializer, TeamEmployeeSerializer
@@ -27,18 +27,30 @@ class TeamFilter(FilterSet):
     Filter set class for searching in teams.
     It can filter based on team name, create_date or update_date.
     """
-    q = CharFilter(field_name='name', lookup_expr='icontains')
+    name = CharFilter(field_name='name', lookup_expr='icontains')
     create_date = DateTimeFromToRangeFilter()
-    update_date = DateTimeFromToRangeFilter()
 
     class Meta:
         model = Team
-        fields = ['name', 'create_date', 'update_date']
+        fields = ['name', 'create_date']
+
+
+class TeamEmployeeFilter(FilterSet):
+    """
+    Filter set class for searching in TeamEmployee.
+    It can filter based on team_id, employee_id.
+    """
+    team = NumberFilter(field_name='team_id')
+    employee = NumberFilter(field_name='employee_id')
+
+    class Meta:
+        model = TeamEmployee
+        fields = ['team', 'employee']
 
 
 class EmployeeListCreateAPIView(ListCreateAPIView):
     """
-       View class for listing, searching and creating employees.
+     View class for listing, searching and creating employees.
     """
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = EmployeeFilter
@@ -56,7 +68,7 @@ class EmployeeRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
 class TeamListCreateAPIView(ListCreateAPIView):
     """
-       View class for listing, searching and creating teams.
+     View class for listing, searching and creating teams.
     """
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = TeamFilter
@@ -74,11 +86,11 @@ class TeamRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
 class TeamEmployeeListCreateAPIView(ListCreateAPIView):
     """
-       View class for listing, searching and creating TeamEmployee objects.
+     View class for listing, searching and creating TeamEmployee objects.
     """
     filter_backends = [DjangoFilterBackend]
+    filterset_class = TeamEmployeeFilter
     serializer_class = TeamEmployeeSerializer
-    pagination_class = PagePagination
     queryset = TeamEmployee.objects.all()
 
 
@@ -94,4 +106,4 @@ class TeamEmployeeRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         if instance.team.leader == instance.employee and Team.objects.filter(id=instance.team.id).exists():
             return Response('A team leader can not be removed from the team.', status=status.HTTP_400_BAD_REQUEST)
         else:
-            return super().perform_destroy()
+            return super().destroy(self, request, *args, **kwargs)
