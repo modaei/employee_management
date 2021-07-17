@@ -72,6 +72,10 @@ class EmployeeListGetDeleteSetup(APITestCase):
         self.employee_jane = Employee.objects.create(name='Jane Doe', employee_id='12345B', hourly_rate=11.3)
         self.employee_jenny = Employee.objects.create(name='Jenny Doe', employee_id='A2345B', hourly_rate=18.6)
 
+    def tearDown(self):
+        Employee.objects.all().delete()
+        super().tearDown()
+
 
 class EmployeeCreateTests(EmployeeCreateUpdateSetup):
     def setUp(self):
