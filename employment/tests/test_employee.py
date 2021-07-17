@@ -64,10 +64,6 @@ class EmployeeCreateUpdateSetup(APITestCase):
             'hourly_rate': 12.255
         }
 
-    def tearDown(self):
-        Employee.objects.all().delete()
-        super().tearDown()
-
 
 class EmployeeListGetDeleteSetup(APITestCase):
     def setUp(self):
@@ -75,10 +71,6 @@ class EmployeeListGetDeleteSetup(APITestCase):
         self.employee_john = Employee.objects.create(name='John Doe', employee_id='123456', hourly_rate=17.3)
         self.employee_jane = Employee.objects.create(name='Jane Doe', employee_id='12345B', hourly_rate=11.3)
         self.employee_jenny = Employee.objects.create(name='Jenny Doe', employee_id='A2345B', hourly_rate=18.6)
-
-    def tearDown(self):
-        Employee.objects.all().delete()
-        super().tearDown()
 
 
 class EmployeeCreateTests(EmployeeCreateUpdateSetup):
@@ -169,7 +161,7 @@ class EmployeeListTests(EmployeeListGetDeleteSetup):
 
     def test_get_all_employees(self):
         response = self.client.get(self.url)
-        employees = Employee.objects.all()
+        employees = Employee.objects.all().order_by('-create_date')
         serializer = EmployeeSerializer(employees, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["results"], serializer.data)
