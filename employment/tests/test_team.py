@@ -161,7 +161,7 @@ class TeamDeleteTests(TeamListGetDeleteSetup):
 
     def test_delete_valid_team(self):
         response = self.client.delete(self.url)
-        team = Team.objects.filter(id=self.employee_jane.pk).first()
+        team = Team.objects.filter(id=self.team_backend.pk).first()
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertIsNone(team)
 

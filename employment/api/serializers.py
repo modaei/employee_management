@@ -154,20 +154,21 @@ class WorkArrangementSerializer(ModelSerializer):
 
     def validate(self, attrs):
         """
-        If WorkArrangement is full time, user must have no other work arrangements.
-        If WorkArrangement is part time, percentage is mandatory.
-        If WorkArrangement is part time, user must not have a full time job.
+        If WorkArrangement is full time, user must have no other work arrangements. (On create only)
+        If WorkArrangement is part time, percentage is mandatory. (On create and update)
+        If WorkArrangement is part time, user must not have a full time job. (On create only)
         If WorkArrangement is part time, sum of all user work arrangement percentages must be less than or equal 100.
+        (On create and update)
         """
         if attrs['type'] == WorkArrangement.WorkTypes.FullTime:
-            if WorkArrangement.objects.filter(employee_id=attrs['employee']).exists():
+            if WorkArrangement.objects.filter(employee_id=attrs['employee']).exists() and not self.instance:
                 raise ValidationError("Employee already has another work assignment.")
         elif attrs['type'] == WorkArrangement.WorkTypes.PartTime:
             if 'percentage' not in attrs or attrs['percentage'] is None:
                 raise ValidationError("Percentage should be specified for work assignments.")
             work_arrangements = WorkArrangement.objects.filter(employee_id=attrs['employee']).all()
             if any(work_arrangement.type == WorkArrangement.WorkTypes.FullTime for work_arrangement in
-                   work_arrangements):
+                   work_arrangements) and not self.instance:
                 raise ValidationError("User already has a full time work assignment.")
             sum_percentage = WorkArrangement.objects.filter(employee_id=attrs['employee']).aggregate(Sum('percentage'))[
                 'percentage__sum']
