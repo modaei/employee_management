@@ -1,14 +1,14 @@
 {
   "openapi": "3.0.2",
   "info": {
-    "title": "",
+    "title": "Employee management",
     "version": ""
   },
   "paths": {
     "/api/employees/": {
       "get": {
         "operationId": "listEmployees",
-        "description": "View class for listing, searching and creating employees.",
+        "description": "Listing and searching employees.",
         "parameters": [
           {
             "name": "page",
@@ -29,19 +29,10 @@
             }
           },
           {
-            "name": "q",
-            "required": false,
-            "in": "query",
-            "description": "q",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "name",
             "required": false,
             "in": "query",
-            "description": "name",
+            "description": "Complete or a part of the employee's name to search for",
             "schema": {
               "type": "string"
             }
@@ -50,7 +41,7 @@
             "name": "employee_id",
             "required": false,
             "in": "query",
-            "description": "employee_id",
+            "description": "Employee's employee_id (company identification number)",
             "schema": {
               "type": "string"
             }
@@ -59,7 +50,7 @@
             "name": "create_date",
             "required": false,
             "in": "query",
-            "description": "create_date",
+            "description": "creation date and time",
             "schema": {
               "type": "string"
             }
@@ -116,7 +107,7 @@
       },
       "post": {
         "operationId": "createEmployee",
-        "description": "View class for listing, searching and creating employees.",
+        "description": "Creating employees.",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -157,7 +148,7 @@
     "/api/employees/{id}/": {
       "get": {
         "operationId": "retrieveEmployee",
-        "description": "",
+        "description": "Get a single employee details.",
         "parameters": [
           {
             "name": "id",
@@ -187,7 +178,7 @@
       },
       "put": {
         "operationId": "updateEmployee",
-        "description": "",
+        "description": "Update a single employee.",
         "parameters": [
           {
             "name": "id",
@@ -236,7 +227,7 @@
       },
       "patch": {
         "operationId": "partialUpdateEmployee",
-        "description": "",
+        "description": "Partial update an employee.",
         "parameters": [
           {
             "name": "id",
@@ -285,7 +276,7 @@
       },
       "delete": {
         "operationId": "destroyEmployee",
-        "description": "",
+        "description": "Delete an employee.",
         "parameters": [
           {
             "name": "id",
@@ -299,6 +290,847 @@
         ],
         "responses": {
           "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      }
+    },
+    "/api/teams/": {
+      "get": {
+        "operationId": "listTeams",
+        "description": "Listing teams.",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Complete or a part of the team's name to search for",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "create_date",
+            "required": false,
+            "in": "query",
+            "description": "creation date and time",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordering",
+            "required": false,
+            "in": "query",
+            "description": "Which field to use when ordering the results.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "example": 123
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true,
+                      "format": "uri",
+                      "example": "http://api.example.org/accounts/?page=4"
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true,
+                      "format": "uri",
+                      "example": "http://api.example.org/accounts/?page=2"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Team"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      },
+      "post": {
+        "operationId": "createTeam",
+        "description": "Create team.",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Team"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Team"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Team"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      }
+    },
+    "/api/teams/{id}/": {
+      "get": {
+        "operationId": "retrieveTeam",
+        "description": "Get a single team details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A unique integer value identifying this team.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      },
+      "put": {
+        "operationId": "updateTeam",
+        "description": "Update a team.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A unique integer value identifying this team.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Team"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Team"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Team"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      },
+      "patch": {
+        "operationId": "partialUpdateTeam",
+        "description": "Partial update a team.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A unique integer value identifying this team.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Team"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Team"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Team"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      },
+      "delete": {
+        "operationId": "destroyTeam",
+        "description": "Delete a team.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A unique integer value identifying this team.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      }
+    },
+    "/api/team-employees/": {
+      "get": {
+        "operationId": "listTeamEmployees",
+        "description": "Listing TeamEmployee objects.",
+        "parameters": [
+          {
+            "name": "team",
+            "required": false,
+            "in": "query",
+            "description": "Id of the related team to search for.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "employee",
+            "required": false,
+            "in": "query",
+            "description": "Id of the related employee to search for.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TeamEmployee"
+                  }
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      },
+      "post": {
+        "operationId": "createTeamEmployee",
+        "description": "Creating TeamEmployee objects.",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamEmployee"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamEmployee"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamEmployee"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamEmployee"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      }
+    },
+    "/api/team-employees/{id}/": {
+      "get": {
+        "operationId": "retrieveTeamEmployee",
+        "description": "Get a single TeamEmployee",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A unique integer value identifying this team employee.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamEmployee"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      },
+      "put": {
+        "operationId": "updateTeamEmployee",
+        "description": "Update a team employee object.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A unique integer value identifying this team employee.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamEmployee"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamEmployee"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamEmployee"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamEmployee"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      },
+      "patch": {
+        "operationId": "partialUpdateTeamEmployee",
+        "description": "Partial update a team employee object",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A unique integer value identifying this team employee.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamEmployee"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamEmployee"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamEmployee"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamEmployee"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      },
+      "delete": {
+        "operationId": "destroyTeamEmployee",
+        "description": "Delete a team employee object (Remove the employee from the team).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A unique integer value identifying this team employee.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      }
+    },
+    "/api/work-arrangements/": {
+      "get": {
+        "operationId": "listWorkArrangements",
+        "description": "Listing and searching WorkArrangements.",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "employee",
+            "required": false,
+            "in": "query",
+            "description": "Id of the employee to search for.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "1=full time, 2=part time ",
+            "schema": {
+              "type": "string",
+              "enum": [
+                1,
+                2
+              ]
+            }
+          },
+          {
+            "name": "ordering",
+            "required": false,
+            "in": "query",
+            "description": "Which field to use when ordering the results.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "example": 123
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true,
+                      "format": "uri",
+                      "example": "http://api.example.org/accounts/?page=4"
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true,
+                      "format": "uri",
+                      "example": "http://api.example.org/accounts/?page=2"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/WorkArrangement"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      },
+      "post": {
+        "operationId": "createWorkArrangement",
+        "description": "Creating WorkArrangements.",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkArrangement"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkArrangement"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkArrangement"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkArrangement"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      }
+    },
+    "/api/work-arrangements/{id}/": {
+      "get": {
+        "operationId": "retrieveWorkArrangement",
+        "description": "Get a work arrangement details.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A unique integer value identifying this work arrangement.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkArrangement"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      },
+      "put": {
+        "operationId": "updateWorkArrangement",
+        "description": "Update a work arrangement object.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A unique integer value identifying this work arrangement.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkArrangement"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkArrangement"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkArrangement"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkArrangement"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      },
+      "patch": {
+        "operationId": "partialUpdateWorkArrangement",
+        "description": "Partial update work arrangement",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A unique integer value identifying this work arrangement.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkArrangement"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkArrangement"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkArrangement"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkArrangement"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      },
+      "delete": {
+        "operationId": "destroyWorkArrangement",
+        "description": "Delete a work arrangement.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A unique integer value identifying this work arrangement.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "api"
+        ]
+      }
+    },
+    "/api/salaries/": {
+      "get": {
+        "operationId": "listSalarys",
+        "description": "Returns salaries of employees.",
+        "parameters": [
+          {
+            "name": "employee",
+            "required": false,
+            "in": "query",
+            "description": "Id of the employee to search for.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {}
+                }
+              }
+            },
             "description": ""
           }
         },
@@ -325,6 +1157,27 @@
             "type": "string",
             "readOnly": true
           },
+          "teams": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "readOnly": true
+                },
+                "name": {
+                  "type": "string",
+                  "readOnly": true
+                },
+                "create_date": {
+                  "type": "string",
+                  "readOnly": true
+                }
+              }
+            },
+            "readOnly": true
+          },
           "name": {
             "type": "string",
             "maxLength": 50
@@ -345,6 +1198,121 @@
           "name",
           "employee_id",
           "hourly_rate"
+        ]
+      },
+      "Team": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "create_date": {
+            "type": "string",
+            "readOnly": true
+          },
+          "update_date": {
+            "type": "string",
+            "readOnly": true
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "readOnly": true
+                },
+                "create_date": {
+                  "type": "string",
+                  "readOnly": true
+                },
+                "name": {
+                  "type": "string",
+                  "readOnly": true
+                },
+                "employee_id": {
+                  "type": "string",
+                  "readOnly": true
+                }
+              }
+            },
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "leader": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "leader"
+        ]
+      },
+      "TeamEmployee": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "create_date": {
+            "type": "string",
+            "readOnly": true
+          },
+          "employee": {
+            "type": "integer"
+          },
+          "team": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "employee",
+          "team"
+        ]
+      },
+      "WorkArrangement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "create_date": {
+            "type": "string",
+            "readOnly": true
+          },
+          "update_date": {
+            "type": "string",
+            "readOnly": true
+          },
+          "type": {
+            "enum": [
+              1,
+              2
+            ],
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "percentage": {
+            "type": "integer",
+            "maximum": 100,
+            "nullable": true,
+            "minimum": 0
+          },
+          "employee": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "type",
+          "employee"
         ]
       }
     }
