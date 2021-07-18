@@ -3,6 +3,8 @@ from django.conf import settings
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.core.validators import MaxValueValidator
+from decimal import Decimal
+from django.db.models import Sum
 
 
 class Employee(models.Model):
@@ -51,6 +53,35 @@ class WorkArrangement(models.Model):
     percentage = models.PositiveIntegerField(null=True, blank=True, validators=[MaxValueValidator(100), ])
     create_date = models.DateTimeField(auto_now=False, auto_now_add=True, verbose_name="Created")
     update_date = models.DateTimeField(auto_now=True, auto_now_add=False, verbose_name="Last updated")
+
+
+class Salary(object):
+    """
+    Calculates the salary of an employee for a month.
+    """
+    employee = models.ForeignKey(Employee, blank=False, null=False, on_delete=models.CASCADE)
+    payable = 0
+
+    def calculate_payable(self):
+        full_time_hours = Decimal(settings.FULL_TIME_HOURS)
+        leader_coefficient = Decimal(settings.LEADER_COEFFICIENT)
+
+        is_leader = any(team.leader == self.employee for team in self.employee.teams.all())
+        hourly_rate = self.employee.hourly_rate
+        if is_leader:
+            hourly_rate = leader_coefficient * hourly_rate
+
+        work_arrangements = WorkArrangement.objects.filter(employee=self.employee).all()
+        if work_arrangements.count() > 0:
+            if work_arrangements.first().type == WorkArrangement.WorkTypes.FullTime:
+                self.payable = full_time_hours * hourly_rate
+            else:
+                sum_percentage = work_arrangements.aggregate(Sum('percentage'))['percentage__sum']
+                self.payable = Decimal(sum_percentage / 100) * full_time_hours * hourly_rate
+
+    def __init__(self, employee, *args, **kwargs):
+        self.employee = employee
+        self.calculate_payable()
 
 
 @receiver(post_save, sender=Team)

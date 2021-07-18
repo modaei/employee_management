@@ -1,4 +1,5 @@
-from rest_framework.serializers import (ModelSerializer, SerializerMethodField, ValidationError)
+from rest_framework.serializers import (ModelSerializer, SerializerMethodField, ValidationError, Serializer,
+                                        DecimalField)
 from ..models import Team, Employee, TeamEmployee, WorkArrangement
 import re
 from rest_framework.validators import UniqueTogetherValidator
@@ -182,3 +183,8 @@ class WorkArrangementSerializer(ModelSerializer):
         """
         self.fields['employee'] = EmployeeBriefSerializer()
         return super(WorkArrangementSerializer, self).to_representation(instance)
+
+
+class SalarySerializer(Serializer):
+    employee = EmployeeBriefSerializer()
+    payable = DecimalField(max_digits=5, decimal_places=2)

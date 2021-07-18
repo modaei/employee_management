@@ -1,12 +1,15 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.views import APIView
 from django_filters.rest_framework import (DjangoFilterBackend, FilterSet, DateTimeFromToRangeFilter,
                                            CharFilter, NumberFilter)
 from rest_framework.filters import OrderingFilter
-from ..models import Employee, Team, TeamEmployee, WorkArrangement
-from .serializers import EmployeeSerializer, TeamSerializer, TeamEmployeeSerializer, WorkArrangementSerializer
+from ..models import Employee, Team, TeamEmployee, WorkArrangement, Salary
+from .serializers import EmployeeSerializer, TeamSerializer, TeamEmployeeSerializer, WorkArrangementSerializer, \
+    SalarySerializer
 from employee_management.paginations import PagePagination
 from rest_framework.response import Response
 from rest_framework import status
+from django.shortcuts import get_object_or_404
 
 
 class EmployeeFilter(FilterSet):
@@ -137,3 +140,16 @@ class WorkArrangementListCreateAPIView(ListCreateAPIView):
 class WorkArrangementRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = WorkArrangementSerializer
     queryset = WorkArrangement.objects.all()
+
+
+class SalaryAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        id = kwargs.get('pk', None)
+        if id is None:
+            employees = Employee.objects.all()
+            salaries = [Salary(employee=employee) for employee in employees]
+            return Response(SalarySerializer(salaries, many=True, read_only=True).data, status=status.HTTP_200_OK)
+        else:
+            employee = get_object_or_404(Employee, id=id)
+            salary = Salary(employee)
+            return Response(SalarySerializer(salary, many=False, read_only=True).data, status=status.HTTP_200_OK)
