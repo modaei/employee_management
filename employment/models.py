@@ -57,25 +57,32 @@ class WorkArrangement(models.Model):
 
 class Salary(object):
     """
-    Calculates the salary of an employee for a month.
+    Takes an employee as a parameter in the constructor and then calculates the salary of
+    the employee and stores it in self.payable variable automatically.
     """
     employee = models.ForeignKey(Employee, blank=False, null=False, on_delete=models.CASCADE)
     payable = 0
 
     def calculate_payable(self):
+        """
+        calculates the salary of the employee based on his work arrangements.
+        """
         full_time_hours = Decimal(settings.FULL_TIME_HOURS)
         leader_coefficient = Decimal(settings.LEADER_COEFFICIENT)
 
         is_leader = any(team.leader == self.employee for team in self.employee.teams.all())
-        hourly_rate = self.employee.hourly_rate
+        hourly_rate = Decimal(self.employee.hourly_rate)
+        # If an employee is a leader in any group, his hourly wage should be multiplied to a coefficient.
         if is_leader:
             hourly_rate = leader_coefficient * hourly_rate
 
         work_arrangements = WorkArrangement.objects.filter(employee=self.employee).all()
         if work_arrangements.count() > 0:
+            # If the employee has a full time work arrangement, he has no other work arrangements.
             if work_arrangements.first().type == WorkArrangement.WorkTypes.FullTime:
                 self.payable = full_time_hours * hourly_rate
             else:
+                # If the employee has a part time work arrangement, he may have other work arrangements too.
                 sum_percentage = work_arrangements.aggregate(Sum('percentage'))['percentage__sum']
                 self.payable = Decimal(sum_percentage / 100) * full_time_hours * hourly_rate
 

@@ -143,13 +143,20 @@ class WorkArrangementRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
 
 class SalaryAPIView(APIView):
+    """
+    Only supports GET method to returns the salaries.
+    """
+
     def get(self, request, *args, **kwargs):
-        id = kwargs.get('pk', None)
-        if id is None:
+        """
+        Returns salaries of all employees or a single one.
+        """
+        employee_id = request.query_params.get('employee')
+        if employee_id:
+            employee = get_object_or_404(Employee, id=employee_id)
+            salary = Salary(employee)
+            return Response(SalarySerializer(salary, many=False, read_only=True).data, status=status.HTTP_200_OK)
+        else:
             employees = Employee.objects.all()
             salaries = [Salary(employee=employee) for employee in employees]
             return Response(SalarySerializer(salaries, many=True, read_only=True).data, status=status.HTTP_200_OK)
-        else:
-            employee = get_object_or_404(Employee, id=id)
-            salary = Salary(employee)
-            return Response(SalarySerializer(salary, many=False, read_only=True).data, status=status.HTTP_200_OK)

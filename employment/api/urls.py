@@ -22,6 +22,5 @@ urlpatterns = [
     path('work-arrangements/<int:pk>/', WorkArrangementRetrieveUpdateDestroyAPIView.as_view(),
          name="work_arrangement_retrieve_update_destroy"),
 
-    path('salaries/', SalaryAPIView.as_view(), name="salaries_list"),
-    path('salaries/<int:pk>/', SalaryAPIView.as_view(), name="salaries_list"),
+    path('salaries/', SalaryAPIView.as_view(), name="salary_list"),
 ]
