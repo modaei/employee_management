@@ -8,7 +8,7 @@ from django.db.models import Sum
 
 class EmployeeBriefSerializer(ModelSerializer):
     """
-    Serializes employee objects with minimal info to include in team members info.
+    Serializes employee objects with minimal info to include in other serializers.
     """
     create_date = SerializerMethodField()
 
@@ -23,7 +23,7 @@ class EmployeeBriefSerializer(ModelSerializer):
 
 class TeamBriefSerializer(ModelSerializer):
     """
-    Serializes team objects with minimal info to include in employees team info.
+    Serializes team objects with minimal info to include in other serializers.
     """
     create_date = SerializerMethodField()
 
@@ -186,5 +186,8 @@ class WorkArrangementSerializer(ModelSerializer):
 
 
 class SalarySerializer(Serializer):
+    """
+    Serializer salary objects.
+    """
     employee = EmployeeBriefSerializer()
     payable = DecimalField(max_digits=5, decimal_places=2)

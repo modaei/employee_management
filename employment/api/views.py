@@ -77,6 +77,9 @@ class EmployeeListCreateAPIView(ListCreateAPIView):
 
 
 class EmployeeRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    """
+    View class for getting, updating, and deleting an employee object.
+    """
     serializer_class = EmployeeSerializer
     queryset = Employee.objects.all()
 
@@ -95,6 +98,9 @@ class TeamListCreateAPIView(ListCreateAPIView):
 
 
 class TeamRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    """
+    View class for getting, updating, and deleting a team object.
+    """
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
 
@@ -110,6 +116,9 @@ class TeamEmployeeListCreateAPIView(ListCreateAPIView):
 
 
 class TeamEmployeeRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    """
+    View class for getting, updating, and deleting a team employee object.
+    """
     serializer_class = TeamEmployeeSerializer
     queryset = TeamEmployee.objects.all()
 
@@ -138,6 +147,9 @@ class WorkArrangementListCreateAPIView(ListCreateAPIView):
 
 
 class WorkArrangementRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    """
+    View class for getting, updating, and deleting a work arrangement object.
+    """
     serializer_class = WorkArrangementSerializer
     queryset = WorkArrangement.objects.all()
 

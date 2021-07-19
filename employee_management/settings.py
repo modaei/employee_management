@@ -97,6 +97,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 NAME_MAX_LEN = 50
 EMPLOYEE_ID_MAX_LEN = 12
 
-# Salary related numbers
+# Salary related constants
 LEADER_COEFFICIENT = 1.1
 FULL_TIME_HOURS = 40
